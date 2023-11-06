@@ -23,10 +23,21 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq, sc
         lr_scheduler = torch.optim.lr_scheduler.LinearLR(
             optimizer, start_factor=warmup_factor, total_iters=warmup_iters
         )
+    
+    for batch in metric_logger.log_every(data_loader, print_freq, header):
+        images = []
+        targets = []
 
-    for images, targets in metric_logger.log_every(data_loader, print_freq, header):
-        images = list(image.to(device) for image in images)
-        targets = [{k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in t.items()} for t in targets]
+        for sample in batch:
+            images.append(sample[0].to(device))
+            target = {}
+            target["boxes"] = sample[1]["boxes"].to(device)
+            target["labels"] = sample[1]["labels"].to(torch.int64).to(device)
+            targets.append(target)
+
+    # for images, targets in metric_logger.log_every(data_loader, print_freq, header):
+        # images = list(image.to(device) for image in images)
+        # targets = [{k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in t.items()} for t in targets]
         with torch.cuda.amp.autocast(enabled=scaler is not None):
             loss_dict = model(images, targets)
             losses = sum(loss for loss in loss_dict.values())
@@ -75,7 +86,6 @@ def _get_iou_types(model):
 @torch.inference_mode()
 def evaluate(model, data_loader, device):
     n_threads = torch.get_num_threads()
-    # FIXME remove this and make paste_masks_in_image run on the GPU
     torch.set_num_threads(1)
     cpu_device = torch.device("cpu")
     model.eval()
@@ -86,8 +96,19 @@ def evaluate(model, data_loader, device):
     iou_types = _get_iou_types(model)
     coco_evaluator = CocoEvaluator(coco, iou_types)
 
-    for images, targets in metric_logger.log_every(data_loader, 100, header):
-        images = list(img.to(device) for img in images)
+    for batch in metric_logger.log_every(iterable=data_loader, print_freq=100, header=header):
+        images = []
+        targets = []
+
+        for sample in batch:
+            images.append(sample[0].to(device))
+            target = {}
+            target["boxes"] = sample[1]["boxes"].to(device)
+            target["labels"] = sample[1]["labels"].to(torch.int64).to(device)
+            target["image_id"] = sample[1]["image_id"]
+            targets.append(target)
+    # for images, targets in metric_logger.log_every(data_loader, 100, header):
+    #     images = list(img.to(device) for img in images)
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()

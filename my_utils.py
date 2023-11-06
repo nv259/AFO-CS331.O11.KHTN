@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 from torch.utils.data import Dataset
 import torch
 
+from tqdm.auto import tqdm
+
 
 def loadImages(images_list, num):
     loaded_images = []

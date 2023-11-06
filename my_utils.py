@@ -140,7 +140,7 @@ def custom_collate(data):
 
 
 class AFODataset(Dataset):
-    def __init__(self, mode='train', transform=None, classes=None):
+    def __init__(self, mode='train', transform=None, classes=None, root_img_path="/content/drive/MyDrive/FinalProject-CS321.O11/Dataset/images/", root_ann_path="/content/drive/MyDrive/FinalProject-CS321.O11/Dataset/labels/"):
         self.mode = mode
         self.transform = transform
         self.classes = classes

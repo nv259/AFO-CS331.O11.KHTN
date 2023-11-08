@@ -199,7 +199,7 @@ class AFODataset(Dataset):
             cv2.imwrite(img_file.replace(".jpg", "_aug_hsv.jpg"), img_aug_hsv)
             # cv2.imwrite(img_horiz_flip, img_file.replace(".jpg", "_horiz_flip.jpg")) 
             
-            self.img_names.append(img_file.replace(".jpg", "_aug_hsv.jpg"))
+            self.img_names.append(img_name.replace(".jpg", "_aug_hsv.jpg"))
             # self.img_names.append(img_file.replace(".jpg", "_horiz_flip.jpg"))
         
         print(len(img_names_copy), "--", len(self.img_names))

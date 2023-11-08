@@ -161,7 +161,7 @@ class AFODataset(Dataset):
         self.img_names.sort()
         self._remove_background()
         
-        if mode != 'test':
+        if mode == 'train':
             self._augment()
 
     def _augment(self):
@@ -183,6 +183,7 @@ class AFODataset(Dataset):
             
             return flip_img
 
+        print("Augmentation")
         img_names_copy = self.img_names.copy()
         for img_name in img_names_copy: 
             img_file = os.path.join(self.img_path, img_name)
@@ -197,7 +198,6 @@ class AFODataset(Dataset):
             self.img_names.append(img_file.replace(".jpg", "_aug_hsv.jpg"))
             # self.img_names.append(img_file.replace(".jpg", "_horiz_flip.jpg"))
         
-        print("Augmentation")
         print(len(img_names_copy), "--", len(self.img_names))
         
     # Remove background images

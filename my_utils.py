@@ -160,7 +160,9 @@ class AFODataset(Dataset):
         self.img_names = os.listdir(self.img_path)
         self.img_names.sort()
         self._remove_background()
-        self._augment()
+        
+        if mode != 'test':
+            self._augment()
 
     def _augment(self):
         def hsv(img):
@@ -189,7 +191,7 @@ class AFODataset(Dataset):
             img_aug_hsv = hsv(img)
             # img_horiz_flip = horiz_flip(img)
             
-            cv2.imwrite(img_aug_hsv, img_file.replace(".jpg", "_aug_hsv.jpg"))
+            cv2.imwrite(img_file.replace(".jpg", "_aug_hsv.jpg"), img_aug_hsv)
             # cv2.imwrite(img_horiz_flip, img_file.replace(".jpg", "_horiz_flip.jpg")) 
             
             self.img_names.append(img_file.replace(".jpg", "_aug_hsv.jpg"))

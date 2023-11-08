@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 
 from torch.utils.data import Dataset
 import torch
-
+from torchvision import transforms
+import transforms as T
 from tqdm.auto import tqdm
 
 
@@ -146,14 +147,55 @@ class AFODataset(Dataset):
         self.mode = mode
         self.transform = transform
         self.classes = classes
-
+        self.aug_transform = T.Compose(
+            T.RandomHorizontalFlip(),
+            T.RandomZoomOut(),
+            T.RandomIoUCrop()
+        )
         self.img_path = os.path.join(root_img_path, mode)
         self.ann_path = os.path.join(root_ann_path, mode)
 
         self.img_names = os.listdir(self.img_path)
         self.img_names.sort()
         self._remove_background()
+        self._augment()
 
+    def _augment(self, img_name):
+        def hsv(img):
+            img_float32 = np.float32(img)
+            # Convert the RGB image to HSV
+            hsv_image = cv2.cvtColor(img_float32, cv2.COLOR_RGB2HSV)
+            # Get a random delta between -100 and 100
+            delta = np.random.randint(low=-100, high=100, size=1)[0]
+            # Modify the hue by that quantity and convert it back
+            hsv_image[:,:,0] = np.mod(hsv_image[:,:,0] + delta, 360.)
+            rgb_image = cv.cvtColor(hsv_image, cv.COLOR_HSV2RGB)
+
+            return rgb_image
+
+        def horiz_flip(img):
+            img_float32 = np.float32(img)
+            flip_img = cv.flip(img_float32, 0) 
+            
+            return flip_img
+
+        img_names_copy = self.img_names.copy()
+        for img_name in img_names_copy: 
+            img_file = os.path.join(self.img_path, img_name)
+            
+            img = cv2.imread(img_file)
+            img_aug_hsv = hsv(img)
+            # img_horiz_flip = horiz_flip(img)
+            
+            cv2.imwrite(img_aug_hsv, img_file.replace(".jpg", "_aug_hsv.jpg"))
+            # cv2.imwrite(img_horiz_flip, img_file.replace(".jpg", "_horiz_flip.jpg")) 
+            
+            self.img_names.append(img_file.replace(".jpg", "_aug_hsv.jpg"))
+            # self.img_names.append(img_file.replace(".jpg", "_horiz_flip.jpg"))
+        
+        print("Augmentation")
+        print(len(img_names_copy), "--", len(self.img_names))
+        
     # Remove background images
     def _remove_background(self, verbose=False):
         _count = 0
@@ -172,8 +214,8 @@ class AFODataset(Dataset):
 
                 self.img_names.remove(img_name)
                 _count = _count + 1
-
-            progress_bar.update(1)
+                
+            progress_bar.update(1) 
 
         print(f"Total removed background images: {_count}")
         print(f"{len(img_names_copy)} -- {len(self.img_names)}")
@@ -188,6 +230,10 @@ class AFODataset(Dataset):
         return img
 
     def _load_annot(self, img_name, img_width=None, img_height=None):
+        flip = False
+        if "_aug_hsv" in img_name:
+            img_name = img_name.replace("_aug_hsv", "")
+        
         ann_path = os.path.join(self.ann_path, img_name[:-3] + 'txt')
         with open(ann_path, 'r') as f:
             annot = [line.strip() for line in f.readlines()]
@@ -203,7 +249,8 @@ class AFODataset(Dataset):
         labels = annot[:, 0].astype(int) + 1  # 0s for background class
         boxes = annot[:, 1:]
         boxes = xywh2xyxy(boxes, img_width=img_width, img_height=img_height)
-
+        
+        # if flip:
         return torch.from_numpy(boxes), torch.from_numpy(labels)
 
     def __len__(self):
@@ -221,4 +268,7 @@ class AFODataset(Dataset):
         # suppose all instances are not crowd
         target["iscrowd"] = torch.zeros((len(target["boxes"]), ), dtype=torch.int64)
 
+        if self.aug_transform is not None:
+            img, target = self.aug_transform(img, target)
+        
         return img, target

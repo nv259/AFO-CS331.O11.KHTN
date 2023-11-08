@@ -154,6 +154,8 @@ class AFODataset(Dataset):
             T.RandomZoomOut(),
             T.RandomIoUCrop()]
         )
+        self.aug_transform = None
+        
         self.img_path = os.path.join(root_img_path, mode)
         self.ann_path = os.path.join(root_ann_path, mode)
 
@@ -243,6 +245,7 @@ class AFODataset(Dataset):
             img_name = img_name.replace("_aug_hsv", "")
         
         ann_path = os.path.join(self.ann_path, img_name[:-3] + 'txt')
+    
         with open(ann_path, 'r') as f:
             annot = [line.strip() for line in f.readlines()]
 

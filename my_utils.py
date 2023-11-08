@@ -143,14 +143,16 @@ def custom_collate(data):
 
 
 class AFODataset(Dataset):
-    def __init__(self, mode='train', transform=None, classes=None, root_img_path="/content/drive/MyDrive/FinalProject-CS321.O11/Dataset/images/", root_ann_path="/content/drive/MyDrive/FinalProject-CS321.O11/Dataset/labels/"):
+    def __init__(self, mode='train', transform=None, classes=None, 
+                 root_img_path="/content/drive/MyDrive/FinalProject-CS321.O11/Dataset/images/", 
+                 root_ann_path="/content/drive/MyDrive/FinalProject-CS321.O11/Dataset/labels/"):
         self.mode = mode
         self.transform = transform
         self.classes = classes
         self.aug_transform = T.Compose(
-            T.RandomHorizontalFlip(),
+            [T.RandomHorizontalFlip(),
             T.RandomZoomOut(),
-            T.RandomIoUCrop()
+            T.RandomIoUCrop()]
         )
         self.img_path = os.path.join(root_img_path, mode)
         self.ann_path = os.path.join(root_ann_path, mode)

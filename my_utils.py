@@ -171,13 +171,13 @@ class AFODataset(Dataset):
             delta = np.random.randint(low=-100, high=100, size=1)[0]
             # Modify the hue by that quantity and convert it back
             hsv_image[:,:,0] = np.mod(hsv_image[:,:,0] + delta, 360.)
-            rgb_image = cv.cvtColor(hsv_image, cv.COLOR_HSV2RGB)
+            rgb_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2RGB)
 
             return rgb_image
 
         def horiz_flip(img):
             img_float32 = np.float32(img)
-            flip_img = cv.flip(img_float32, 0) 
+            flip_img = cv2.flip(img_float32, 0) 
             
             return flip_img
 

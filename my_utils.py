@@ -154,7 +154,7 @@ class AFODataset(Dataset):
             T.RandomZoomOut(),
             T.RandomIoUCrop()]
         )
-        self.aug_transform = None
+        # self.aug_transform = None
         
         self.img_path = os.path.join(root_img_path, mode)
         self.ann_path = os.path.join(root_ann_path, mode)

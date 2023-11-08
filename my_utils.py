@@ -157,6 +157,10 @@ class AFODataset(Dataset):
         self.img_path = os.path.join(root_img_path, mode)
         self.ann_path = os.path.join(root_ann_path, mode)
 
+        print("Create dataset:")
+        print(self.img_path)
+        print(self.ann_path)
+        
         self.img_names = os.listdir(self.img_path)
         self.img_names.sort()
         self._remove_background()

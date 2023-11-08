@@ -162,7 +162,7 @@ class AFODataset(Dataset):
         self._remove_background()
         self._augment()
 
-    def _augment(self, img_name):
+    def _augment(self):
         def hsv(img):
             img_float32 = np.float32(img)
             # Convert the RGB image to HSV

@@ -539,7 +539,7 @@ class COCOeval:
                 mean_s = -1
             else:
                 mean_s = np.mean(s[s>-1])
-            #print(iStr.format(titleStr, typeStr, catId, iouStr, areaRng, maxDets, mean_s))
+            print(iStr.format(titleStr, typeStr, catId, iouStr, areaRng, maxDets, mean_s))
             return mean_s
 
         def _summarizeDets_per_category():
@@ -594,18 +594,18 @@ class COCOeval:
             category_stats = np.zeros((10,len(self.params.catIds)))
             for category_index, category_id in self.params.catIds:
                 category_stats[0][category_index] = _summarize_single_category(1,
-                                                                               maxDets=20,
+                                                                               maxDets=100,
                                                                                categoryId=category_id)
                 category_stats[1][category_index] = _summarize_single_category(1,
-                                                                               maxDets=20,
+                                                                               maxDets=100,
                                                                                iouThr=.5,
                                                                                categoryId=category_id)
                 category_stats[2][category_index] = _summarize_single_category(1,
-                                                                               maxDets=20,
+                                                                               maxDets=200,
                                                                                iouThr=.75,
                                                                                categoryId=category_id)
                 category_stats[3][category_index] = _summarize_single_category(1,
-                                                                               maxDets=20,
+                                                                               maxDets=200,
                                                                                areaRng='medium',
                                                                                categoryId=category_id)
                 category_stats[4][category_index] = _summarize_single_category(1,

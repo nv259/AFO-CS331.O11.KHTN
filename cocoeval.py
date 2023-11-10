@@ -653,7 +653,7 @@ class Params:
     '''
     def setDetParams(self):
         self.imgIds = []
-        self.catIds = []
+        self.catIds = [0, 1, 2]
         # np.arange causes trouble.  the data point on arange is slightly larger than the true value
         self.iouThrs = np.linspace(.5, 0.95, np.round((0.95 - .5) / .05) + 1, endpoint=True)
         self.recThrs = np.linspace(.0, 1.00, np.round((1.00 - .0) / .01) + 1, endpoint=True)

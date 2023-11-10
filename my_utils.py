@@ -165,9 +165,9 @@ class AFODataset(Dataset):
         
         self.img_names = os.listdir(self.img_path)
         self.img_names.sort()
-        self._remove_background()
         
         if mode == 'train':
+            self._remove_background()
             self._augment()
 
     def _augment(self):

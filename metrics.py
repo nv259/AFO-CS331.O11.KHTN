@@ -123,3 +123,6 @@ def mAP05_095(
     print(f"mAP@0.5:0.95 {final_mAP}")
     
     return final_mAP
+
+
+def my_evaluate(model, loader, )

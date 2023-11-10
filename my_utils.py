@@ -92,6 +92,9 @@ def imgCoords(coords, img):
 def drawAnnotation(img, annotList):
 #     npimg = np.array(img)
 #     cvImage = cv2.cvtColor(npimg, cv2.COLOR_RGB2BGR)
+    if '.jpg' in img:
+        img = Image.open(img).convert("RGB")
+        
     img_copy = img.copy()
     for annot in annotList:
         drawImg = ImageDraw.Draw(img_copy)

@@ -1,4 +1,5 @@
 import torch
+import torchvision
 import numpy as np
 
 from collections import Counter
@@ -125,4 +126,45 @@ def mAP05_095(
     return final_mAP
 
 
-def my_evaluate(model, loader, )
+def my_evaluate(model, loader, iou_threshold=None, device=torch.device('cuda')):
+    model.eval()
+    bboxes_pred = []
+    labels_pred = []
+    scores_pred = []
+    image_ids = []
+    
+    # Get all predictions
+    for batch in loader:
+        imgs = []
+        targets = []
+        
+        for sample in batch:
+            imgs.append(sample[0].to(device))
+            target = {}
+            target["boxes"] = sample[1]["boxes"].to(device)
+            target["labels"] = sample[1]["labels"].to(device)
+            target["image_id"] = sample[1]["image_id"].to(device)
+            targets.append(target)
+            
+        with torch.no_grad():
+            ret_dict = model(imgs)
+        
+        bboxes_pred.append(ret_dict["boxes"].tolist())
+        labels_pred.append(ret_dict["labels"].tolist())
+        scores_pred.append(ret_dict["scores"].tolist())
+        image_ids.append()
+
+    bboxes_pred = torch.tensor(bboxes_pred)
+    labels_pred = torch.tensor(labels_pred)
+    scores_pred = torch.tensor(scores_pred)
+
+    # Non Max Suppression
+    if iou_threshold is not None:
+        for idx in range(len(bboxes_pred)):
+            remain_ids = torchvision.ops.batch_nms(bboxes_pred[idx], scores_pred[idx], labels_pred[idx], 
+                                                   iou_threshold=iou_threshold)
+            bboxes_pred[idx] = bboxes_pred[idx][remain_ids]
+            labels_pred[idx] = labels_pred[idx][remain_ids]
+            scores_pred[idx] = scores_pred[idx][remain_ids]
+
+    

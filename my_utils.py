@@ -95,11 +95,6 @@ def drawAnnotation(img, annotList, clsList, confList, width=4, font = ImageFont.
     if '.jpg' in img:
         img = Image.open(img).convert("RGB")
     
-    # assert list
-    annotList = annotList.tolist()
-    clsList = clsList.tolist()
-    confList = confList.tolist()
-    
     img_copy = img.copy()
     for cls, annot, conf in zip(clsList, annotList, confList):
         # Prepare

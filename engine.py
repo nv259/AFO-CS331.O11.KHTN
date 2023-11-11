@@ -1,6 +1,7 @@
 import math
 import sys
 import time
+import os
 
 import torch
 import torchvision.models.detection.mask_rcnn
@@ -84,7 +85,9 @@ def _get_iou_types(model):
 
 
 @torch.inference_mode()
-def evaluate(model, data_loader, device):
+def evaluate(model, data_loader, device, 
+             root_img_path="/content/drive/MyDrive/FinalProject-CS321.O11/Dataset/images/",
+             yolo_model=None, mode = "val"):
     n_threads = torch.get_num_threads()
     torch.set_num_threads(1)
     cpu_device = torch.device("cpu")
@@ -100,7 +103,8 @@ def evaluate(model, data_loader, device):
     for batch in metric_logger.log_every(iterable=data_loader, print_freq=100, header=header):
         images = []
         targets = []
-
+        img_sources = []  # for yolo detection
+        
         for sample in batch:
             images.append(sample[0].to(device))
             target = {}
@@ -108,13 +112,20 @@ def evaluate(model, data_loader, device):
             target["labels"] = sample[1]["labels"].to(torch.int64).to(device)
             target["image_id"] = sample[1]["image_id"]
             targets.append(target)
+            img_sources.append(os.path.join(root_img_path, mode, sample[1]["image_id"]))
+            
     # for images, targets in metric_logger.log_every(data_loader, 100, header):
     #     images = list(img.to(device) for img in images)
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
         model_time = time.time()
-        outputs = model(images)
+        
+        if yolo_model is not None:
+            yolo_pred_imgs = yolo_model(img_sources)
+            outputs = model(images, yolo_pred_imgs)
+        else:
+            outputs = model(images)
 
         outputs = [{k: v.to(cpu_device) for k, v in t.items()} for t in outputs]
         model_time = time.time() - model_time

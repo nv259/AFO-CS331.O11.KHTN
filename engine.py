@@ -123,7 +123,7 @@ def evaluate(model, data_loader, device,
         
         if yolo_model is not None:
             yolo_pred_imgs = yolo_model(img_sources)
-            outputs = model(images, yolo_pred_imgs)
+            outputs = model(images, img_sources, yolo_pred_imgs)
         else:
             outputs = model(images)
 

@@ -89,7 +89,7 @@ def imgCoords(coords, img):
     return [int(x1), int(y1), int(x2), int(y2)]
 
 
-def drawAnnotation(img, annotList, clsList, confList, width=4, font = ImageFont.truetype("/content/drive/MyDrive/FinalProject-CS321.O11/Roboto-Regular.ttf", 40)):
+def drawAnnotation(img, annotList, clsList, confList, width=4, font = ImageFont.truetype("Roboto-Regular.ttf", 40)):
 #     npimg = np.array(img)
 #     cvImage = cv2.cvtColor(npimg, cv2.COLOR_RGB2BGR)
     if '.jpg' in img:

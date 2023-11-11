@@ -98,6 +98,7 @@ def drawAnnotation(img, annotList, clsList, confList, width=4, font = ImageFont.
     img_copy = img.copy()
     for cls, annot, conf in zip(clsList, annotList, confList):
         # Prepare
+        print(cls)
         if cls == 0: # small objects
             txt = "Small Object " + str(round(conf, 2))
             outline = (255, 0, 0)

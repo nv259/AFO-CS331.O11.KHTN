@@ -96,7 +96,7 @@ def evaluate(model, data_loader, device,
     header = "Test:"
 
     coco = get_coco_api_from_dataset(data_loader.dataset)
-    print(coco.getCatIds())
+    # print(coco.getCatIds())
     iou_types = _get_iou_types(model)
     coco_evaluator = CocoEvaluator(coco, iou_types)
 
@@ -143,7 +143,9 @@ def evaluate(model, data_loader, device,
 
     # accumulate predictions from all images
     coco_evaluator.accumulate()
-    coco_evaluator.summarize()
+    
+    # for hyperparams search
+    return coco_evaluator.summarize()
     coco_evaluator.coco_eval["bbox"].summarize_per_category()
     torch.set_num_threads(n_threads)
     

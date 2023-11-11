@@ -89,7 +89,7 @@ def imgCoords(coords, img):
     return [int(x1), int(y1), int(x2), int(y2)]
 
 
-def drawAnnotation(img, annotList, clsList, confList, width=4):
+def drawAnnotation(img, annotList, clsList, confList, width=4, font = ImageFont.load_default()):
 #     npimg = np.array(img)
 #     cvImage = cv2.cvtColor(npimg, cv2.COLOR_RGB2BGR)
     if '.jpg' in img:
@@ -104,11 +104,10 @@ def drawAnnotation(img, annotList, clsList, confList, width=4):
         else:  # large objects
             txt = "Large Object " + str(round(conf, 2))
             outline = (0, 255, 0)
-        fnt = ImageFont.truetype("arial.ttf", 10)
         
         drawImg = ImageDraw.Draw(img_copy)
         drawImg.rectangle(annot, outline=outline, width=width)
-        drawImg.text((annot[0], annot[1]), txt, font=fnt, fill=outline)
+        drawImg.text((annot[0], annot[1]), txt, font=font, fill=outline)
 #         cv2.rectangle(cvImage, (annot[0], annot[1]), (annot[2], annot[3]), (255,0,0), 2)
     plt.imshow(img_copy)
     plt.axis('off')

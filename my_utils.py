@@ -89,27 +89,32 @@ def imgCoords(coords, img):
     return [int(x1), int(y1), int(x2), int(y2)]
 
 
-def drawAnnotation(img, annotList, clsList, confList, width=4, font = ImageFont.load_default()):
+def drawAnnotation(img, annotList, clsList, confList, width=4, font = ImageFont.truetype("/content/drive/MyDrive/FinalProject-CS321.O11/Roboto-Regular.ttf", 40)):
 #     npimg = np.array(img)
 #     cvImage = cv2.cvtColor(npimg, cv2.COLOR_RGB2BGR)
     if '.jpg' in img:
         img = Image.open(img).convert("RGB")
-        
+    
+    # assert list
+    annotList = annotList.tolist()
+    clsList = clsList.tolist()
+    confList = confList.tolist()
+    
     img_copy = img.copy()
     for cls, annot, conf in zip(clsList, annotList, confList):
         # Prepare
-        print(cls)
         if cls == 0: # small objects
             txt = "Small Object " + str(round(conf, 2))
             outline = (255, 0, 0)
         else:  # large objects
             txt = "Large Object " + str(round(conf, 2))
             outline = (0, 255, 0)
-        
+
         drawImg = ImageDraw.Draw(img_copy)
         drawImg.rectangle(annot, outline=outline, width=width)
-        drawImg.text((annot[0], annot[1]), txt, font=font, fill=outline)
+        drawImg.text((annot[0], annot[1] - 40), txt, font=font, fill=outline)
 #         cv2.rectangle(cvImage, (annot[0], annot[1]), (annot[2], annot[3]), (255,0,0), 2)
+    plt.figure(figsize=(19, 10))
     plt.imshow(img_copy)
     plt.axis('off')
     plt.show()

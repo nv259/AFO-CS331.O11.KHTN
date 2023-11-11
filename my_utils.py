@@ -104,7 +104,7 @@ def drawAnnotation(img, annotList, clsList, confList, width=4):
         else:  # large objects
             txt = "Large Object " + str(round(conf, 2))
             outline = (0, 255, 0)
-        fnt = ImageFont.truetype("Pillow/Tests/fonts/FreeMono.ttf", 40)
+        fnt = ImageFont.truetype("arial.ttf", 10)
         
         drawImg = ImageDraw.Draw(img_copy)
         drawImg.rectangle(annot, outline=outline, width=width)
@@ -113,6 +113,7 @@ def drawAnnotation(img, annotList, clsList, confList, width=4):
     plt.imshow(img_copy)
     plt.axis('off')
     plt.show()
+    
 
 def xywh2xyxy(boxes_xywh, img_width, img_height):
     boxes_xyxy = []

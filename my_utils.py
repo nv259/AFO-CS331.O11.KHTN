@@ -89,7 +89,7 @@ def imgCoords(coords, img):
     return [int(x1), int(y1), int(x2), int(y2)]
 
 
-def drawAnnotation(img, annotList, clsList, confList, width=4, font = ImageFont.truetype("Roboto-Regular.ttf", 40)):
+def drawAnnotation(img, annotList, clsList, confList, width=5, font = ImageFont.truetype("Roboto-Regular.ttf", 40), drawTxt=False):
 #     npimg = np.array(img)
 #     cvImage = cv2.cvtColor(npimg, cv2.COLOR_RGB2BGR)
     if '.jpg' in img:
@@ -107,7 +107,9 @@ def drawAnnotation(img, annotList, clsList, confList, width=4, font = ImageFont.
 
         drawImg = ImageDraw.Draw(img_copy)
         drawImg.rectangle(annot, outline=outline, width=width)
-        drawImg.text((annot[0], annot[1] - 40), txt, font=font, fill=outline)
+        
+        if drawTxt:
+            drawImg.text((annot[0], annot[1] - 40), txt, font=font, fill=outline)
 #         cv2.rectangle(cvImage, (annot[0], annot[1]), (annot[2], annot[3]), (255,0,0), 2)
     plt.figure(figsize=(19, 10))
     plt.imshow(img_copy)
